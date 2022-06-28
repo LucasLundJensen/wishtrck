@@ -107,3 +107,79 @@ export async function deleteUserById(userId: string | number): Promise<APIRespon
 		};
 	}
 }
+
+export async function getUserById(userId: number | string, unsafe?: boolean): Promise<APIResponse> {
+	try {
+		const user = await db.user.findUnique({
+			where: {
+				id: +userId,
+			},
+			select: {
+				email: true,
+				firstName: true,
+				id: true,
+				lastName: true,
+				password: unsafe ?? false,
+			},
+		});
+
+		if (!user) {
+			return {
+				data: null,
+				message: "No account with that ID found.",
+				status: Status.FetchingFailed,
+			};
+		}
+
+		return {
+			data: user,
+			message: "Account found",
+			status: Status.Fetched,
+		};
+	} catch (error) {
+		console.error("Getting acount information failed.", error);
+		return {
+			data: null,
+			message: "Getting account information failed.",
+			status: Status.FetchingFailed,
+		};
+	}
+}
+
+export async function getUserByEmail(email: string, unsafe?: boolean): Promise<APIResponse> {
+	try {
+		const user = await db.user.findUnique({
+			where: {
+				email,
+			},
+			select: {
+				email: true,
+				firstName: true,
+				id: true,
+				lastName: true,
+				password: unsafe ?? false,
+			},
+		});
+
+		if (!user) {
+			return {
+				data: null,
+				message: "Could not find account by that email.",
+				status: Status.NotFound,
+			};
+		}
+
+		return {
+			data: user,
+			message: "Account found",
+			status: Status.Found,
+		};
+	} catch (error) {
+		console.error("Getting account by email failed", error);
+		return {
+			data: null,
+			message: "Getting account by email failed",
+			status: Status.FetchingFailed,
+		};
+	}
+}

@@ -6,7 +6,7 @@ import cors from "cors";
 import config from "./config";
 import UserRoutes from "./routes/user.routes";
 import { deleteUserById } from "./services/user.service";
-// import "./middlewares/passport";
+import "./middlewares/passport";
 
 const app = express();
 
